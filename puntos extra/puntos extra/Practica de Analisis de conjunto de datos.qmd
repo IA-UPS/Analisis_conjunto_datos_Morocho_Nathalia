@@ -1,0 +1,167 @@
+---
+title: "Practica de Analisis de conjunto de datos"
+author: "Nathalia Morocho - Daniel Andrade"
+format: html
+editor: visual
+---
+
+## Analissi de un conjunto de datos
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(caret)
+library(ggstatsplot)
+library(DescTools)
+library(ineq)
+library(corrplot)
+library(rstantools)
+```
+
+```{r}
+datos <- read.csv("./lung-cancer.data")
+datos
+
+
+
+datos1 <- datos[,c(1:4)]
+datos1
+```
+
+## Estadistica Descriptiva
+
+```{r}
+#Maximos, minimos media mediana y moda
+
+#Maximos
+max_datos <- apply(datos1, 2, max)
+max_datos
+```
+
+```{r}
+#Minimo
+min_datos <- apply(datos1, 2, min)
+min_datos
+```
+
+```{r}
+#mediana
+med_datos <- apply(datos1, 2, median)
+med_datos
+
+```
+
+```{r}
+options(scipen = 999)
+mediadatos <- apply(datos1, 2, median)
+mediadatos
+```
+
+```{r}
+#Moda
+moda_datos <- apply(datos1, 2, Mode)
+moda_datos
+```
+
+```{r}
+rango2 <- apply(datos1, 2, range)
+rango2
+```
+
+```{r}
+rango1 <- apply(datos1, 2, Range)
+rango1
+
+```
+
+```{r}
+#Varianza
+var_datos <- apply(datos1, 2, var)
+var_datos
+```
+
+```{r}
+#Desviasion estandar
+des_datos <- apply(datos1, 2, sd)
+des_datos
+```
+
+```{r}
+#Quartil
+quar_datos <- apply(datos1, 2, quantile)
+quar_datos 
+```
+
+```{r}
+# Frecuancia absoluta y relativa
+Freab_datos <- apply(datos1, 2, table)
+Frere_datos <- apply(datos1, 2, prop.table)
+
+```
+
+```{r}
+a <- apply(Frere_datos, 2, Gini)
+a
+```
+
+```{r}
+# curva de lorenz
+plot(Lc(a), col="red")
+```
+
+Estadistica Descriptiva univariante inferencial
+
+```{r}
+ggbetweenstats(datos1, X1, y=X0.1)
+```
+
+Estadistica descriptiva bivariante inferencial
+
+```{r}
+round(cor(datos1),2)
+```
+
+```{r}
+Matrz_corr <- cor(as.matrix(datos1))
+Matrz_corr
+```
+
+```{r}
+corre_datos <- round(cor(datos1),1)
+corrplot(corre_datos, method = "circle")
+```
+
+```{r}
+boxplot(datos1, main = "Comparacion de datos")
+```
+
+```{r}
+plot(datos1, col = "red")
+```
+
+```{r}
+test <- t.test(datos1$X1)
+test1 <- t.test(datos1$X0)
+test2 <- t.test(datos1$X3)
+test3 <- t.test(datos1$X0.1)
+lista1 <- list(test, test1, test2, test3)
+lista1
+```
+##Estadistica Descriptiva Multivariante Inferencial (PCA)
+
+```{r}
+sum <- summary(datos1)
+
+pca_datos <- prcomp(datos1[,0:4], scale. = FALSE)
+#plot_pca <- bind_cols(outcome=datos1$X1, datos1$x)
+plot_pca <- data.frame(PC1 = "x1", PC2 = "x0.1", outcome=datos1$X1)
+ggplot(plot_pca, aes(PC1, PC2, color=outcome))+
+        geom_point()+ coord_cartesian(xlim = c(-3,3), ylim = c(-3,3), )
+```
+
+```{r}
+Plot2 <- summary(pca_datos)$importance[2,]
+plot(Plot2, type = "b", xlab = "Datos", ylab = "Varianza")
+```
+
+
